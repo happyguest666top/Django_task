@@ -28,7 +28,7 @@ class Task(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('tasks:task-detail', kwargs={'pk': self.pk})
+        return reverse('stasik2:task-detail', kwargs={'pk': self.pk})
 
 
 class Comment(models.Model):

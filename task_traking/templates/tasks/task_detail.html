@@ -7,8 +7,8 @@
     <p>{{ task.description }}</p>
     <p>Статус: <span class="badge badge-primary">{{ task.status }}</span></p>
     <p>Пріоритет: <span class="badge badge-secondary">{{ task.priority }}</span></p>
-    <a href="{% url 'tasks:task-update' task.id %}" class="btn btn-warning">Редагувати</a>
-    <a href="{% url 'tasks:task-delete' task.id %}" class="btn btn-danger">Видалити</a>
+    <a href="{% url 'stasik2:task-update' task.id %}" class="btn btn-warning">Редагувати</a>
+    <a href="{% url 'stasik2:task-delete' task.id %}" class="btn btn-danger">Видалити</a>
 
     <!-- Коментарі -->
     <div class="comments mt-4">
@@ -31,7 +31,7 @@
                     </div>
                 {% endif %}
                 <small>Автор: {{ comment.author.username }}</small>
-                <form action="{% url 'tasks:comment-like-toggle' comment.id %}" method="post">
+                <form action="{% url 'stasik2:comment-like-toggle' comment.id %}" method="post">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-sm {% if request.user in comment.likes.all %}btn-success{% else %}btn-outline-success{% endif %}">
                         Лайк {{ comment.likes.count }}
@@ -46,7 +46,7 @@
     <!-- Форма додавання коментаря -->
     <div class="add-comment mt-4">
         <h4>Додати коментар</h4>
-        <form action="{% url 'tasks:task-detail' task.id %}" method="post" enctype="multipart/form-data">
+        <form action="{% url 'stasik2:task-detail' task.id %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ comment_form.as_p }}
             <button type="submit" class="btn btn-primary">Відправити</button>

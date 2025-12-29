@@ -16,4 +16,4 @@ urlpatterns = [
     path("register/", RegisterView.as_view(), name="register"),
 ]
 
-app_name = "tasks"
+app_name = "stasik2"

@@ -1,9 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from tasks import models
+from stasik2 import models
 from django.views.generic import ListView, DetailView, CreateView, View, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from tasks.forms import TaskForm, TaskFilterForm, CommentForm
+from .forms import TaskForm, TaskFilterForm, CommentForm
 from django.http import HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.views import LoginView, LogoutView
@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 
-from tasks.mixins import UserIsOwnerMixin
+from .mixins import UserIsOwnerMixin
 
 
 class TaskListView(ListView):
@@ -49,7 +49,7 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
             comment.author = request.user
             comment.task = self.get_object()
             comment.save()
-            return redirect('tasks:task-detail', pk=comment.task.pk)
+            return redirect('stasik2:task-detail', pk=comment.task.pk)
         else:
             # Тут можна обробити випадок з невалідною формою
             pass
@@ -59,7 +59,7 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     model = models.Task
     template_name = "tasks/task_form.html"
     form_class = TaskForm
-    success_url = reverse_lazy("tasks:task-list")
+    success_url = reverse_lazy("stasik2:task-list")
 
     def form_valid(self, form):
         form.instance.creator = self.request.user
@@ -71,7 +71,7 @@ class TaskCompleteView(LoginRequiredMixin, UserIsOwnerMixin, View):
         task = self.get_object()
         task.status = "done"
         task.save()
-        return HttpResponseRedirect(reverse_lazy("tasks:task-list"))
+        return HttpResponseRedirect(reverse_lazy("stasik2:task-list"))
 
     def get_object(self):
         task_id = self.kwargs.get("pk")
@@ -82,12 +82,12 @@ class TaskUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
     model = models.Task
     form_class = TaskForm
     template_name = "tasks/task_update_form.html"
-    success_url = reverse_lazy("tasks:task-list")
+    success_url = reverse_lazy("stasik2:task-list")
 
 
 class TaskDeleteView(LoginRequiredMixin, UserIsOwnerMixin, DeleteView):
     model = models.Task
-    success_url = reverse_lazy("tasks:task-list")
+    success_url = reverse_lazy("stasik2:task-list")
     template_name = "tasks/task_delete_confirmation.html"
 
 
@@ -103,7 +103,7 @@ class CommentUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('tasks:task_detail', kwargs={'pk': self.object.task.pk})
+        return reverse_lazy('stasik2:task_detail', kwargs={'pk': self.object.task.pk})
 
 
 class CommentDeleteView(LoginRequiredMixin, DeleteView):
@@ -115,7 +115,7 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
         return queryset.filter(author=self.request.user)
 
     def get_success_url(self):
-        return reverse_lazy('tasks:task_detail', kwargs={'pk': self.object.task.pk})
+        return reverse_lazy('stasik2:task_detail', kwargs={'pk': self.object.task.pk})
 
 
 class CommentLikeToggle(LoginRequiredMixin, View):
@@ -135,7 +135,7 @@ class CustomLoginView(LoginView):
 
 
 class CustomLogoutView(LogoutView):
-    next_page = "tasks:login"
+    next_page = "stasik2:login"
 
 
 class RegisterView(CreateView):
@@ -145,4 +145,4 @@ class RegisterView(CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        return redirect(reverse_lazy("tasks:login"))
+        return redirect(reverse_lazy("stasik2:login"))
